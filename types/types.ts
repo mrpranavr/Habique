@@ -14,6 +14,7 @@ export interface Habit {
   createdAt: number; // timestamp (ms)
   schedule: DayOfWeek[]; // which days the habit recurs
   completedDates: string[]; // ['2025-05-13', '2025-05-14'] (ISO date strings)
+  daysChecked: { [date: string]: true };
   streak: number; // current streak
   lastCompleted: string | null; // last completed date (ISO)
   emoji?: string; // optional emoji or icon

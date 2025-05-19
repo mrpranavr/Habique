@@ -56,6 +56,7 @@ export default function AddHabitScreen() {
           'Sunday',
         ] as DayOfWeek[],
         completedDates: [],
+        daysChecked: {},
         streak: 0,
         lastCompleted: null,
         emoji: '🏁',

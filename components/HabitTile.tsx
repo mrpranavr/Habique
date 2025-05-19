@@ -4,6 +4,8 @@ import { View, Text, Pressable } from 'react-native';
 import { DayOfWeek, Habit } from '../types/types'
 import Animated, { ZoomIn, ZoomOut } from 'react-native-reanimated';
 import { clsx } from 'clsx';
+import { useHabits } from 'context/HabitsContext';
+import { formatDate } from 'utils/streak';
 
 interface HabitTileProps {
   habit: Habit;
@@ -12,14 +14,9 @@ interface HabitTileProps {
 const daysOfWeek = ['S', 'M', 'T', 'W', 'T', 'F', 'S'];
 
 const HabitTile: React.FC<HabitTileProps> = ({ habit }) => {
-  const today = new Date().toLocaleDateString('en-CA'); // YYYY-MM-DD
-
-  const [isCompleted, setIsCompleted] = useState(habit.completedDates.includes(today));
-
-  const toggleComplete = () => {
-    setIsCompleted((prev) => !prev);
-    // TODO: update state/DB in parent or context
-  };
+  const today = formatDate(new Date())
+  const {checkOffHabit} = useHabits()
+  const isChecked = habit.daysChecked?.[today]
 
   const todayIndex = new Date().getDay(); // 0 (Sun) to 6 (Sat)
 
@@ -31,13 +28,13 @@ const HabitTile: React.FC<HabitTileProps> = ({ habit }) => {
         </Text>
 
         <Pressable
-          onPress={toggleComplete}
+          onPress={() => checkOffHabit(habit.id)}
           className={clsx(
             'w-9 h-9 rounded-full items-center justify-center border-2',
-            isCompleted ? 'bg-green-500 border-green-600' : 'border-zinc-400'
+            isChecked ? 'bg-green-500 border-green-600' : 'border-zinc-400'
           )}
         >
-          {isCompleted && (
+          {isChecked && (
             <Animated.Text
               entering={ZoomIn}
               exiting={ZoomOut}

@@ -13,3 +13,7 @@ export const saveHabits = async (newHabit: Habit): Promise<void> => {
   const updated = [...habits, newHabit];
   await AsyncStorage.setItem(HABIT_KEY, JSON.stringify(updated));
 }
+
+export const saveAllHabits = async (habits: Habit[]) => {
+  await AsyncStorage.setItem(HABIT_KEY, JSON.stringify(habits));
+};
