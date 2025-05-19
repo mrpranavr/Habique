@@ -8,6 +8,7 @@ import { PlusIcon } from 'react-native-heroicons/outline';
 import Animated, { useSharedValue, useAnimatedStyle, withSpring } from 'react-native-reanimated';
 import { Habit } from 'types/types';
 import { getHabits } from 'utils/storage';
+import { useHabits } from 'context/HabitsContext';
 
 type RootStackParamList = {
   Home: undefined;
@@ -20,18 +21,11 @@ const HomeScreen = () => {
   const navigation = useNavigation<NavigationProp>();
 
   // STATES --------------
-  const [habits, setHabits] = useState<Habit[]>([]);
-  const [loading, setLoading] = useState(true);
-
-  const loadHabits = async () => {
-    const storedHabits = await getHabits();
-    setHabits(storedHabits);
-    setLoading(false);
-  };
+  const {habits, loading, reloadHabits} = useHabits()
 
   useFocusEffect(
     useCallback(() => {
-      loadHabits();
+      reloadHabits();
     }, [])
   );
 
@@ -64,7 +58,7 @@ const HomeScreen = () => {
 
   return (
     <View className="relative flex-1 px-4 py-5 bg-white dark:bg-zinc-950">
-      {habits.length === 0 ? (
+      {habits && habits.length === 0 ? (
         <View className="items-center justify-center flex-1 gap-5">
           <Image
             source={require('../assets/add-new.png')} // Add your image to assets

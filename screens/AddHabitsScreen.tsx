@@ -12,6 +12,7 @@ import Toast from 'react-native-toast-message';
 import uuid from 'react-native-uuid';
 import { saveHabits } from 'utils/storage';
 import { DayOfWeek } from 'types/types';
+import { useHabits } from 'context/HabitsContext';
 
 const habitSchema = z.object({
   name: z.string().min(2, 'Habit name is too short'),
@@ -27,6 +28,8 @@ export default function AddHabitScreen() {
   const [startDate, setStartDate] = useState(new Date());
   const [reminder, setReminder] = useState(false);
   const [showDatePicker, setShowDatePicker] = useState(false);
+
+  const {addHabit} = useHabits()
 
   const {
     control,
@@ -58,7 +61,7 @@ export default function AddHabitScreen() {
         emoji: '🏁',
       };
 
-      await saveHabits(newHabit); // this might be failing
+      await addHabit(newHabit); // this might be failing
 
       Toast.show({
         type: 'success',
