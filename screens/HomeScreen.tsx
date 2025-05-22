@@ -13,6 +13,7 @@ import { useHabits } from 'context/HabitsContext';
 type RootStackParamList = {
   Home: undefined;
   AddHabit: undefined;
+  HabitDetail: { habitId: string };
 };
 
 type NavigationProp = NativeStackNavigationProp<RootStackParamList>;
@@ -21,7 +22,7 @@ const HomeScreen = () => {
   const navigation = useNavigation<NavigationProp>();
 
   // STATES --------------
-  const {habits, loading, reloadHabits} = useHabits()
+  const { habits, loading, reloadHabits } = useHabits();
 
   useFocusEffect(
     useCallback(() => {
@@ -64,12 +65,18 @@ const HomeScreen = () => {
             source={require('../assets/add-new.png')} // Add your image to assets
             style={{ width: 50, height: 50, resizeMode: 'contain' }}
           />
-          <Text className="text-base text-center text-gray-500">No habits yet. Add one to get started!</Text>
+          <Text className="text-base text-center text-gray-500">
+            No habits yet. Add one to get started!
+          </Text>
         </View>
       ) : (
         <ScrollView className="mb-4" bounces={false}>
           {habits.map((habit) => (
-            <HabitTile key={habit.id} habit={habit} />
+            <Pressable onPress={() => navigation.navigate('HabitDetail', { habitId: habit.id })}>
+              <HabitTile habit={habit} />
+            </Pressable>
+
+            // <HabitTile key={habit.id} habit={habit} />
           ))}
         </ScrollView>
       )}
@@ -79,8 +86,7 @@ const HomeScreen = () => {
         <Pressable
           onPressIn={handlePressIn}
           onPressOut={handlePressOut}
-          className="p-4 bg-blue-600 rounded-full shadow-lg shadow-black/40"
-        >
+          className="p-4 bg-blue-600 rounded-full shadow-lg shadow-black/40">
           <PlusIcon size={28} color="white" />
         </Pressable>
       </Animated.View>

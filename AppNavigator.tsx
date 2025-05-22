@@ -7,6 +7,7 @@ import AddHabitScreen from './screens/AddHabitsScreen';
 import { Pressable, Text } from 'react-native';
 import { PlusIcon } from 'react-native-heroicons/outline';
 import { Ionicons } from '@expo/vector-icons';
+import HabitDetailScreen from 'screens/HabitDetailScreen';
 
 const Stack = createNativeStackNavigator();
 
@@ -31,6 +32,7 @@ export default function AppNavigator() {
           component={AddHabitScreen}
           options={{ presentation: 'modal', headerTitle: 'Add Habit' }}
         />
+        <Stack.Screen name="HabitDetail" component={HabitDetailScreen} />
       </Stack.Navigator>
     </NavigationContainer>
   );
