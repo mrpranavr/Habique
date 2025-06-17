@@ -6,6 +6,7 @@ import Animated, { ZoomIn, ZoomOut } from 'react-native-reanimated';
 import { clsx } from 'clsx';
 import { useHabits } from 'context/HabitsContext';
 import { formatDate } from 'utils/streak';
+import { useTheme } from 'context/ThemeContext';
 
 interface HabitTileProps {
   habit: Habit;
@@ -14,6 +15,10 @@ interface HabitTileProps {
 const daysOfWeek = ['S', 'M', 'T', 'W', 'T', 'F', 'S'];
 
 const HabitTile: React.FC<HabitTileProps> = ({ habit }) => {
+
+  const { theme } = useTheme();
+  const isDark = theme === 'dark';
+
   const today = formatDate(new Date())
   const {checkOffHabit} = useHabits()
   const isChecked = habit.daysChecked?.[today]
@@ -21,9 +26,9 @@ const HabitTile: React.FC<HabitTileProps> = ({ habit }) => {
   const todayIndex = new Date().getDay(); // 0 (Sun) to 6 (Sat)
 
   return (
-    <View className="p-4 mb-4 bg-white shadow-sm dark:bg-zinc-900 rounded-2xl">
+    <View className={clsx('p-4 mb-4 bg-white shadow-sm rounded-2xl', isDark && 'dark-habit_tile')}>
       <View className="flex-row items-center justify-between">
-        <Text className="text-xl font-bold dark:text-white">
+        <Text className={clsx('text-xl font-bold', isDark && 'text-white')}>
           {habit.emoji} {habit.name}
         </Text>
 

@@ -4,16 +4,20 @@ import { View, Text, ScrollView } from 'react-native';
 import { useRoute } from '@react-navigation/native';
 import { Calendar } from 'react-native-calendars';
 import { useHabits } from 'context/HabitsContext';
+import { useTheme } from 'context/ThemeContext';
 import dayjs from 'dayjs';
+import { clsx } from 'clsx';
 
 export default function HabitDetailScreen() {
   const route = useRoute();
   const { habitId } = route.params as { habitId: string };
   const { habits } = useHabits();
+  const { theme } = useTheme();
+  const isDark = theme === 'dark';
 
   const habit = habits.find((h) => h.id === habitId);
 
-  if (!habit) return <Text>Habit not found.</Text>;
+  if (!habit) return <Text className={clsx(isDark && 'text-white')}>Habit not found.</Text>;
 
   const markedDates = Object.keys(habit.daysChecked || {}).reduce((acc, date) => {
     acc[date] = { marked: true, dotColor: '#2563eb' };
@@ -21,22 +25,36 @@ export default function HabitDetailScreen() {
   }, {} as Record<string, any>);
 
   return (
-    <ScrollView className="flex-1 p-4 bg-white dark:bg-zinc-900">
-      <Text className="text-3xl font-bold">{habit.emoji} {habit.name}</Text>
-      <Text className="mt-1 text-gray-500">Streak: {habit.streak}</Text>
-      <Text className="mb-4 text-gray-500">Started on: {dayjs(habit.createdAt).format('MMM D, YYYY')}</Text>
+    <ScrollView className={clsx('flex-1 p-4', isDark ? 'dark' : 'bg-white')}>
+      <Text className={clsx('text-3xl font-bold', isDark && 'text-white')}>
+        {habit.emoji} {habit.name}
+      </Text>
+      <Text className={clsx('mt-1 text-gray-500', isDark && 'text-gray-400')}>
+        Streak: {habit.streak}
+      </Text>
+      <Text className={clsx('mb-4 text-gray-500', isDark && 'text-gray-400')}>
+        Started on: {dayjs(habit.createdAt).format('MMM D, YYYY')}
+      </Text>
 
-      <Text className="mb-2 text-lg font-semibold">Completion Calendar</Text>
+      <Text className={clsx('mb-2 text-lg font-semibold', isDark && 'text-white')}>
+        Completion Calendar
+      </Text>
       <Calendar
         markedDates={markedDates}
         theme={{
-          backgroundColor: '#ffffff',
-          calendarBackground: '#ffffff',
-          textSectionTitleColor: '#2e3a59',
+          backgroundColor: isDark ? '#121212' : '#ffffff',
+          calendarBackground: isDark ? '#121212' : '#ffffff',
+          textSectionTitleColor: isDark ? '#e4e4e7' : '#2e3a59',
           selectedDayBackgroundColor: '#2563eb',
           todayTextColor: '#2563eb',
           arrowColor: '#2563eb',
           dotColor: '#2563eb',
+          textDisabledColor: isDark ? '#71717a' : '#d1d5db',
+          textDayStyle: { color: isDark ? '#e4e4e7' : '#000000' },
+          monthTextColor: isDark ? '#fff' : '#121212'
+          // dayTextColor: '#fff'
+          // textMonthStyle: { color: isDark ? '#e4e4e7' : '#000000' },
+          // textDayHeaderStyle: { color: isDark ? '#e4e4e7' : '#000000' },
         }}
       />
     </ScrollView>

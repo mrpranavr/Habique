@@ -14,6 +14,7 @@ import { saveHabits } from 'utils/storage';
 import { DayOfWeek } from 'types/types';
 import { useHabits } from 'context/HabitsContext';
 import EmojiSelector from 'react-native-emoji-selector';
+import { useTheme } from 'context/ThemeContext';
 
 const habitSchema = z.object({
   name: z.string().min(2, 'Habit name is too short'),
@@ -25,6 +26,7 @@ type HabitFormData = z.infer<typeof habitSchema>;
 
 export default function AddHabitScreen() {
   const navigation = useNavigation();
+  const { theme } = useTheme();
 
   const [goalType, setGoalType] = useState('Daily');
   const [startDate, setStartDate] = useState(new Date());
@@ -47,7 +49,6 @@ export default function AddHabitScreen() {
 
       const newHabit = {
         id: uuid.v4() as string,
-
         name: data.name,
         createdAt: Date.now(),
         schedule: [
@@ -66,7 +67,7 @@ export default function AddHabitScreen() {
         emoji,
       };
 
-      await addHabit(newHabit); // this might be failing
+      await addHabit(newHabit);
 
       Toast.show({
         type: 'success',
@@ -88,11 +89,22 @@ export default function AddHabitScreen() {
     }
   };
 
+  const iconColor = theme === 'dark' ? '#9ca3af' : '#6b7280';
+
   return (
-    <ScrollView className="flex-1 p-4 bg-white dark:bg-zinc-900">
-      <Text className="mb-2 text-xl font-bold text-zinc-800 dark:text-white">Habit Name</Text>
-      <View className="flex-row items-center p-3 mb-1 border rounded-xl border-zinc-300 dark:border-zinc-700">
-        <Feather name="edit-2" size={20} color="#6b7280" className="mr-2" />
+    <ScrollView className={clsx('flex-1 p-4', {
+      'bg-white': theme === 'light',
+      'dark': theme === 'dark'
+    })}>
+      <Text className={clsx('mb-2 text-xl font-bold', {
+        'text-zinc-800': theme === 'light',
+        'text-white': theme === 'dark'
+      })}>Habit Name</Text>
+      <View className={clsx('flex-row items-center p-3 mb-1 border rounded-xl', {
+        'border-zinc-300': theme === 'light',
+        'border-zinc-700': theme === 'dark'
+      })}>
+        <Feather name="edit-2" size={20} color={iconColor} className="mr-2" />
         <Controller
           control={control}
           name="name"
@@ -101,7 +113,11 @@ export default function AddHabitScreen() {
               value={value}
               onChangeText={onChange}
               placeholder="e.g. Drink Water"
-              className="flex-1 text-base text-zinc-900 dark:text-white"
+              placeholderTextColor={iconColor}
+              className={clsx('flex-1 text-base', {
+                'text-zinc-900': theme === 'light',
+                'text-white': theme === 'dark'
+              })}
             />
           )}
         />
@@ -109,9 +125,15 @@ export default function AddHabitScreen() {
       {errors.name && <Text className="mb-3 text-red-500">{errors.name.message}</Text>}
 
       {/* Category */}
-      <Text className="mb-2 text-xl font-bold text-zinc-800 dark:text-white">Category</Text>
-      <View className="flex-row items-center p-3 mb-1 border rounded-xl border-zinc-300 dark:border-zinc-700">
-        <FontAwesome name="tag" size={20} color="#6b7280" className="mr-2" />
+      <Text className={clsx('mb-2 text-xl font-bold', {
+        'text-zinc-800': theme === 'light',
+        'text-white': theme === 'dark'
+      })}>Category</Text>
+      <View className={clsx('flex-row items-center p-3 mb-1 border rounded-xl', {
+        'border-zinc-300': theme === 'light',
+        'border-zinc-700': theme === 'dark'
+      })}>
+        <FontAwesome name="tag" size={20} color={iconColor} className="mr-2" />
         <Controller
           control={control}
           name="category"
@@ -120,7 +142,11 @@ export default function AddHabitScreen() {
               value={value}
               onChangeText={onChange}
               placeholder="e.g. Health, Productivity"
-              className="flex-1 text-base text-zinc-900 dark:text-white"
+              placeholderTextColor={iconColor}
+              className={clsx('flex-1 text-base', {
+                'text-zinc-900': theme === 'light',
+                'text-white': theme === 'dark'
+              })}
             />
           )}
         />
@@ -128,15 +154,27 @@ export default function AddHabitScreen() {
       {errors.category && <Text className="mb-3 text-red-500">{errors.category.message}</Text>}
 
       {/* Emoji */}
-      <Text className="mb-2 text-xl font-bold text-zinc-800 dark:text-white">Emoji</Text>
+      <Text className={clsx('mb-2 text-xl font-bold', {
+        'text-zinc-800': theme === 'light',
+        'text-white': theme === 'dark'
+      })}>Emoji</Text>
       <Pressable
         onPress={() => setEmojiModalVisible(true)}
-        className="flex-row items-center p-3 mb-3 border rounded-xl border-zinc-300 dark:border-zinc-700">
+        className={clsx('flex-row items-center p-3 mb-3 border rounded-xl', {
+          'border-zinc-300': theme === 'light',
+          'border-zinc-700': theme === 'dark'
+        })}>
         <Text className="mr-2 text-2xl">{emoji}</Text>
-        <Text className="text-zinc-700 dark:text-white">Tap to pick emoji</Text>
+        <Text className={clsx({
+          'text-zinc-700': theme === 'light',
+          'text-zinc-300': theme === 'dark'
+        })}>Tap to pick emoji</Text>
       </Pressable>
 
-      <Text className="mb-2 text-xl font-bold text-zinc-800 dark:text-white">Goal Type</Text>
+      <Text className={clsx('mb-2 text-xl font-bold', {
+        'text-zinc-800': theme === 'light',
+        'text-white': theme === 'dark'
+      })}>Goal Type</Text>
       <View className="flex-row gap-2 mb-4">
         {['Daily', 'Weekly'].map((type) => (
           <Pressable
@@ -146,12 +184,20 @@ export default function AddHabitScreen() {
               'rounded-full border px-4 py-2',
               goalType === type
                 ? 'border-blue-600 bg-blue-600'
-                : 'border-zinc-400 dark:border-zinc-600'
+                : {
+                    'border-zinc-400': theme === 'light',
+                    'border-zinc-600': theme === 'dark'
+                  }
             )}>
             <Text
               className={clsx(
                 'text-sm font-medium',
-                goalType === type ? 'text-white' : 'text-zinc-700 dark:text-white'
+                goalType === type 
+                  ? 'text-white' 
+                  : {
+                      'text-zinc-700': theme === 'light',
+                      'text-zinc-300': theme === 'dark'
+                    }
               )}>
               {type}
             </Text>
@@ -159,17 +205,26 @@ export default function AddHabitScreen() {
         ))}
       </View>
 
-      <Text className="mb-2 text-xl font-bold text-zinc-800 dark:text-white">Start Date</Text>
+      <Text className={clsx('mb-2 text-xl font-bold', {
+        'text-zinc-800': theme === 'light',
+        'text-white': theme === 'dark'
+      })}>Start Date</Text>
       <Pressable
         onPress={() => setShowDatePicker(true)}
-        className="p-3 mb-4 border rounded-xl border-zinc-300 dark:border-zinc-700">
-        <Text className="text-zinc-700 dark:text-white">{startDate.toDateString()}</Text>
+        className={clsx('p-3 mb-4 border rounded-xl', {
+          'border-zinc-300': theme === 'light',
+          'border-zinc-700': theme === 'dark'
+        })}>
+        <Text className={clsx({
+          'text-zinc-700': theme === 'light',
+          'text-zinc-300': theme === 'dark'
+        })}>{startDate.toDateString()}</Text>
       </Pressable>
       {showDatePicker && (
         <DateTimePicker
           value={startDate}
           mode="date"
-          display="default"
+          display={theme === 'dark' ? 'spinner' : 'default'}
           onChange={(_, date) => {
             setShowDatePicker(false);
             if (date) setStartDate(date);
@@ -178,12 +233,15 @@ export default function AddHabitScreen() {
       )}
 
       <View className="flex-row items-center justify-between mb-6">
-        <Text className="text-xl font-bold text-zinc-800 dark:text-white">Reminder</Text>
+        <Text className={clsx('text-xl font-bold', {
+          'text-zinc-800': theme === 'light',
+          'text-white': theme === 'dark'
+        })}>Reminder</Text>
         <Switch
           value={reminder}
           onValueChange={setReminder}
-          trackColor={{ false: '#ccc', true: '#60a5fa' }}
-          thumbColor={reminder ? '#2563eb' : '#f4f3f4'}
+          trackColor={{ false: '#4b5563', true: '#60a5fa' }}
+          thumbColor={reminder ? '#2563eb' : theme === 'dark' ? '#9ca3af' : '#f4f3f4'}
         />
       </View>
 
@@ -199,8 +257,14 @@ export default function AddHabitScreen() {
         transparent={true}
         onRequestClose={() => setEmojiModalVisible(false)}>
         <View className="items-center justify-center flex-1 bg-black/50">
-          <View className="h-[60%] w-[90%] rounded-2xl bg-white p-4 dark:bg-zinc-800">
-            <Text className="mb-2 text-lg font-bold text-center text-zinc-800 dark:text-white">
+          <View className={clsx('h-[60%] w-[90%] rounded-2xl p-4', {
+            'bg-white': theme === 'light',
+            'bg-zinc-800': theme === 'dark'
+          })}>
+            <Text className={clsx('mb-2 text-lg font-bold text-center', {
+              'text-zinc-800': theme === 'light',
+              'text-white': theme === 'dark'
+            })}>
               Pick an Emoji
             </Text>
             <EmojiSelector
@@ -211,12 +275,17 @@ export default function AddHabitScreen() {
               showSearchBar={true}
               showTabs={true}
               showHistory={true}
-              // category={EmojiSelector.Constants.Categories.all}
-            />
+            /> 
             <Pressable
               onPress={() => setEmojiModalVisible(false)}
-              className="p-2 mt-3 rounded-lg bg-zinc-300 dark:bg-zinc-700">
-              <Text className="text-center text-zinc-800 dark:text-white">Close</Text>
+              className={clsx('p-2 mt-3 rounded-lg', {
+                'bg-zinc-300': theme === 'light',
+                'bg-zinc-700': theme === 'dark'
+              })}>
+              <Text className={clsx('text-center', {
+                'text-zinc-800': theme === 'light',
+                'text-white': theme === 'dark'
+              })}>Close</Text>
             </Pressable>
           </View>
         </View>

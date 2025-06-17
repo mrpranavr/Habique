@@ -1,3 +1,17 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+:root {
+  --dark-bg: #121212;
+  --dark-bg-2: #18181b;
+  --dark-text: #fff;
+}
+
+.dark {
+  background-color: var(--dark-bg);
+}
+
+.dark-habit_tile {
+  background-color: var(--dark-bg-2);
+}
